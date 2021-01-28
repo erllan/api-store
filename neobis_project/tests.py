@@ -1,8 +1,6 @@
 from .models import User, Category, Product
 from rest_framework.test import APITestCase
 from rest_framework import status
-import json
-from django.test import Client
 
 
 class TestApi(APITestCase):
@@ -10,6 +8,7 @@ class TestApi(APITestCase):
         user = User.objects.create(username="test1", email="test1@mail.com")
         user.set_password("xxxxcikadada21321")
         user.is_active = True
+        user.curt_set.create(user=user)
         user.save()
         Product.objects.create(title="test", price=12)
 
@@ -56,6 +55,7 @@ class TestApi(APITestCase):
 
         request = self.client.post('/api/product/', data, HTTP_AUTHORIZATION='Bearer {}'.format(token))
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Product.objects.count(), 2)
 
     def test_get_product(self):
         token = self.user_get_token()
@@ -63,15 +63,16 @@ class TestApi(APITestCase):
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-    # def test_curt(self):
-    #     self.client.login()
-    #     request = self.client.get('/api/curt/', header={'Authorization' 'Bearer {}'.format(token)})
-    #
-    # def test_order(self):
-    #     token = self.user_get_token()
-    #     data = {
-    #         "total": 2,
-    #         "product": 1
-    #     }
-    #     request = self.client.post('/api/order/', data, HTTP_AUTHORIZATION='Bearer {}'.format(token))
-    #     self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+    def test_curt(self):
+        token = self.user_get_token()
+        request = self.client.get('/api/curt/', HTTP_AUTHORIZATION='Bearer {}'.format(token))
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+
+    def test_order(self):
+        token = self.user_get_token()
+        data = {
+            "total": 2,
+            "product": 7
+        }
+        request = self.client.post('/api/order/', data, HTTP_AUTHORIZATION='Bearer {}'.format(token))
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
