@@ -1,5 +1,5 @@
-from .models import Order, User, Category, Product
-from rest_framework.test import APITestCase,APIClient,RequestsClient
+from .models import User, Category, Product
+from rest_framework.test import APITestCase
 from rest_framework import status
 import json
 from django.test import Client
@@ -7,7 +7,6 @@ from django.test import Client
 
 class TestApi(APITestCase):
     def setUp(self):
-        self.requests = RequestsClient()
         user = User.objects.create(username="test1", email="test1@mail.com")
         user.set_password("xxxxcikadada21321")
         user.is_active = True
@@ -39,7 +38,6 @@ class TestApi(APITestCase):
             "name": "test"
         }
         response = self.client.post('/api/category/', data, HTTP_AUTHORIZATION='Bearer {}'.format(token))
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Category.objects.count(), 1)
 
@@ -65,23 +63,15 @@ class TestApi(APITestCase):
 
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
-    def test_curt(self):
-        user = {
-            "username": "test1",
-            "password": "xxxxcikadada21321"
-        }
-        self.client.login(**user)
-        request = self.client.get('/api/curt/')
-        self.assertEqual(request.status_code,200)
-
-    def test_order(self):
-        user = {
-            "username": "test1",
-            "password": "xxxxcikadada21321"
-        }
-        data = {
-            "total": 2,
-            "product": 1
-        }
-        request = self.client.post('/api/order/', data)
-        self.assertEqual(request.status_code, status.HTTP_201_CREATED,)
+    # def test_curt(self):
+    #     self.client.login()
+    #     request = self.client.get('/api/curt/', header={'Authorization' 'Bearer {}'.format(token)})
+    #
+    # def test_order(self):
+    #     token = self.user_get_token()
+    #     data = {
+    #         "total": 2,
+    #         "product": 1
+    #     }
+    #     request = self.client.post('/api/order/', data, HTTP_AUTHORIZATION='Bearer {}'.format(token))
+    #     self.assertEqual(request.status_code, status.HTTP_201_CREATED)
