@@ -52,7 +52,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['product', 'total', 'total_price']
+        fields = ['id','product', 'total', 'total_price']
 
 
 class AddOrderOnCurt(serializers.ModelSerializer):
