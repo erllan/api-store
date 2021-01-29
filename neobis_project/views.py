@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics
 from .serializer import (ProductSerializer, CategorySerializer, UserRegisterSerializer, CurtSerializer, AddOrderOnCurt)
-from .models import (Product, Category, Curt)
+from .models import (Product, Category, Curt, Order)
 from rest_framework import status
 
 """User"""
@@ -42,6 +42,15 @@ class CurtUser(APIView):
         curt = Curt.objects.get(user__id=request.user.id)
         serializer = CurtSerializer(curt)
         return Response(serializer.data)
+
+    def delete(self, request):
+        order_id = request.data['order_id']
+        order = Order.objects.get(id=order_id)
+        status_cod = status.HTTP_400_BAD_REQUEST
+        if order:
+            order.delete()
+            status_cod = status.HTTP_200_OK
+        return Response(status_cod, status=status_cod)
 
 
 """Order"""
