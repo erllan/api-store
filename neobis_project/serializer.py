@@ -37,8 +37,20 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True, many=True)
 
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+    # def create(self, validate_data):
+    #     category_id = validate_data.pop('category')
+    #     product = Product.objects.create(**validate_data)
+    #     category = Category.objects.filter(id__in=category_id)
+    #     product.category.add(**category)
+
+
+class ProductGetSerializer(serializers.ModelSerializer):
+    category  = CategorySerializer(many=True,read_only=True)
     class Meta:
         model = Product
         fields = '__all__'
@@ -48,11 +60,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
+    product = ProductGetSerializer(read_only=True)
 
     class Meta:
         model = Order
-        fields = ['id','product', 'total', 'total_price']
+        fields = ['id', 'product', 'total', 'total_price']
 
 
 class AddOrderOnCurt(serializers.ModelSerializer):
